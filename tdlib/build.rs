@@ -31,12 +31,18 @@ fn load_tl(path: &str) -> io::Result<Vec<Definition>> {
 }
 
 fn main() -> std::io::Result<()> {
+    dotenvy::dotenv().ok();
+
     // Prevent linking libraries to avoid documentation failure
     #[cfg(not(feature = "dox"))]
     system_deps::Config::new().probe().unwrap();
 
-    let definitions =
-        load_tl("https://github.com/tdlib/td/raw/master/td/generate/scheme/td_api.tl")?;
+    let commit_hash = env::var("TDLIB_COMMIT_HASH").unwrap_or_else(|_| "master".into());
+
+    let path =
+        format!("https://github.com/tdlib/td/raw/{commit_hash}/td/generate/scheme/td_api.tl");
+
+    let definitions = load_tl(&path)?;
 
     let mut file = BufWriter::new(File::create(
         Path::new(&env::var("OUT_DIR").unwrap()).join("generated.rs"),
