@@ -8,21 +8,18 @@
 // except according to those terms.
 use std::env;
 use std::fs::File;
-use std::io::{self, BufWriter, Read, Write};
+use std::io::{self, BufWriter, Write};
 use std::path::Path;
 use tdlib_tl_gen::generate_rust_code;
 use tdlib_tl_parser::parse_tl_file;
 use tdlib_tl_parser::tl::Definition;
 
-/// Load the type language definitions from a certain file.
+/// Load the type language definitions from a network resource.
 /// Parse errors will be printed to `stderr`, and only the
 /// valid results will be returned.
-fn load_tl(file: &str) -> io::Result<Vec<Definition>> {
-    let mut file = File::open(file)?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
+fn load_tl(path: &str) -> io::Result<Vec<Definition>> {
+    let contents = ureq::get(path).call().unwrap().into_string()?;
     Ok(parse_tl_file(contents)
-        .into_iter()
         .filter_map(|d| match d {
             Ok(d) => Some(d),
             Err(e) => {
@@ -38,7 +35,8 @@ fn main() -> std::io::Result<()> {
     #[cfg(not(feature = "dox"))]
     system_deps::Config::new().probe().unwrap();
 
-    let definitions = load_tl("tl/api.tl")?;
+    let definitions =
+        load_tl("https://github.com/tdlib/td/raw/master/td/generate/scheme/td_api.tl")?;
 
     let mut file = BufWriter::new(File::create(
         Path::new(&env::var("OUT_DIR").unwrap()).join("generated.rs"),
