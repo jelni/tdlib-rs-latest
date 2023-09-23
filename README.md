@@ -39,4 +39,6 @@ RUN git checkout $TDLIB_COMMIT_HASH
 
 This guarantees the crate will be compatible with the TDLib version specified.
 
+The caveat is that you need internet connection during the build. This shouldn't be a problem on a host intended to run a Telegram bot.
+
 Go to https://github.com/paper-plane-developers/tdlib-rs for actual README.
