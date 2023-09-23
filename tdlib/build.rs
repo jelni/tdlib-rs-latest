@@ -33,8 +33,6 @@ fn load_tl(path: &str) -> io::Result<Vec<Definition>> {
 fn main() -> std::io::Result<()> {
     println!("cargo:rerun-if-env-changed=TDLIB_COMMIT_HASH");
 
-    dotenvy::dotenv().ok();
-
     // Prevent linking libraries to avoid documentation failure
     #[cfg(not(feature = "dox"))]
     system_deps::Config::new().probe().unwrap();

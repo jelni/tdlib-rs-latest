@@ -31,8 +31,7 @@ serde_json = "1.0"
 serde_with = "3.2"
 
 [build-dependencies]
-dotenvy = "0.15"
-ureq = "2.6"
+ureq = "2.7"
 system-deps = "6"
 tdlib-tl-gen = { path = "../tdlib-tl-gen", version = "0.5" }
 tdlib-tl-parser = { path = "../tdlib-tl-parser", version = "0.2" }
